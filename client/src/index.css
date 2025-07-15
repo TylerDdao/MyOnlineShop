@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/* :root{
+  font-family: 'Segoe UI';
+} */
+
+body {
+  @apply font-sans;
+}
+
+@theme{
+  --color-deep_blue: #496287;
+  --color-royal_blue: #007AFF;
+  --color-sunshine_yellow: #FFCC00;
+  --color-tomato_red: #FF3B30; 
+  --color-success_green: #34C759; 
+  --color-gray: #9F9F9F;
+}
+
+/* a{ color:black; } no underlines on any links */
+
+/* styles.css */
+.title {
+  @apply text-[24px] lg:text-[32px] font-bold;
+}
+
+.subtitle {
+  @apply text-[20px] lg:text-[32px] font-bold lg:italic;
+}
+
+.h1 {
+  @apply text-[20px] lg:text-[24px] font-bold;
+}
+
+.h2 {
+  @apply text-[16px] lg:text-[18.72px] font-bold;
+}
+
+.title-b {
+  @apply text-[24px] lg:text-[32px] font-normal;
+}
+
+.subtitle-b {
+  @apply text-[20px] lg:text-[32px] lg:italic font-normal;
+}
+
+.h1-b {
+  @apply text-[20px] lg:text-[24px] font-normal;
+}
+
+.h2-b {
+  @apply text-[16px] lg:text-[18.72px] font-normal;
+}
+
+.h3{
+  @apply text-[14px] lg:text-[16px] font-bold;
+}
+
+.p {
+  @apply text-[14px] lg:text-[16px] font-normal;
+}
+
+.disclaimer {
+  @apply text-[12px] lg:text-[14px] italic;
+}
+
+
+.primary-button{
+  @apply bg-deep_blue text-white p-2.5;
+}
+
+.secondary-button{
+  @apply border border-deep_blue text-black p-2.5;
+}
+
+
+input{
+  @apply p-2.5 border border-black;
+}
+
+textarea{
+  @apply p-2.5 border border-black;
+}
+
+button{
+  @apply p-2.5;
+}
+
+select{
+  @apply px-2.5 py-2.5 border;
+}
