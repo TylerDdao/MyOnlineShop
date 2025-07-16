@@ -1,23 +1,22 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
 @import "tailwindcss";
+
 
 /* :root{
   font-family: 'Segoe UI';
 } */
 
-body {
-  @apply font-sans;
-}
-
 @theme{
   --color-deep_blue: #496287;
-  --color-royal_blue: #007AFF;
-  --color-sunshine_yellow: #FFCC00;
-  --color-tomato_red: #FF3B30; 
-  --color-success_green: #34C759; 
+  --color-royal-blue: #007AFF;
+  --color-sunshine-yellow: #FFCC00;
+  --color-tomato-red: #FF3B30;
+  --color-success-green: #34C759;
   --color-gray: #9F9F9F;
 }
-
-/* a{ color:black; } no underlines on any links */
 
 /* styles.css */
 .title {
@@ -65,11 +64,11 @@ body {
 }
 
 
-.primary-button{
+.primary-button {
   @apply bg-deep_blue text-white p-2.5;
 }
 
-.secondary-button{
+.secondary-button {
   @apply border border-deep_blue text-black p-2.5;
 }
 

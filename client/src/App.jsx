@@ -42,6 +42,8 @@
 
 // export default App;
 
+import './index.css'
+
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/customer/Home.js';
 import Sample from './pages/Sample.jsx';
