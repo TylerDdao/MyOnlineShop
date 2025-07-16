@@ -108,44 +108,70 @@ app.get('/api/verify-orderid', async (req, res) => {
   }
 });
 
+app.get('/api/product-list', async (req, res) =>{
+  try {
+    const [productList] = await sql_functions.getProductList();
+    console.dir(productList, { depth: null });
+    res.status(200)
+    res.json(productList)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+})
+
 app.get('/api/product-detail', async (req, res) => {
   try {
     const productId = req.query.productId;
     if (!productId) return res.status(400).json({ error: 'Missing productId in query' });
-    const productDetail = await sql_functions.getProductDetail(productId);
-    if (!productDetail) {
+
+    const rows = await sql_functions.getProductDetail(productId);
+    if (!rows || rows.length === 0) {
       return res.status(404).json({ error: 'Product not found' });
     }
-    
-    const attributesArray = productDetail.attributes
-      .split(', ')
-      .map(pair => {
-        const [name, value] = pair.split(': ');
-        return { name, value };
+
+    // Build product basic info from first row
+    const product = {
+      product_id: rows[0].product_id,
+      product_name: rows[0].product_name,
+      price: rows[0].price,
+      description: rows[0].description,
+      number_of_images: rows[0].number_of_images,
+      weight: rows[0].weight,
+      combinations: []
+    };
+
+    // Group rows by attribute_combination_id
+    const combinationMap = {};
+    for (const row of rows) {
+      const combId = row.attribute_combination_id;
+      if (!combinationMap[combId]) {
+        combinationMap[combId] = {
+          stock: row.stock,
+          attribute: []
+        };
+      }
+      combinationMap[combId].attribute.push({
+        id: row.attribute_id,
+        value: row.attribute_value,
+        variant: {
+          id: row.variant_id,
+          name: row.variant_name
+        }
       });
+    }
 
-    // Group by name and keep unique values
-    const grouped = Object.values(
-      attributesArray.reduce((acc, { name, value }) => {
-        if (!acc[name]) {
-          acc[name] = { name, values: [] };
-        }
-        if (!acc[name].values.includes(value)) {
-          acc[name].values.push(value);
-        }
-        return acc;
-      }, {})
-    );
+    // Convert to array
+    product.combinations = Object.values(combinationMap);
 
-    productDetail.attributes = grouped;
-
-    console.dir(productDetail, { depth: null })
-    res.status(200);
-    res.json(productDetail);
+    console.dir(product, { depth: null });
+    res.status(200).json(product);
   } catch (error) {
-    console.log(error) ;
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 app.post('/api/orders',async  (req, res) => {
   const order = req.body;  // req.body now contains the whole Order object

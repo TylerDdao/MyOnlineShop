@@ -36,11 +36,11 @@ export type Combination_Product = {
 };
 
 export type Product = {
-  id: string;
-  name: string;
+  product_id: string;
+  product_name: string;
   description: string,
   price: number;
-  number_images: number;
+  number_of_images: number;
   combinations: Combination_Product[];
   weight: number;
 };

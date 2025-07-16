@@ -11,10 +11,10 @@
 
 @theme{
   --color-deep_blue: #496287;
-  --color-royal-blue: #007AFF;
-  --color-sunshine-yellow: #FFCC00;
-  --color-tomato-red: #FF3B30;
-  --color-success-green: #34C759;
+  --color-royal_blue: #007AFF;
+  --color-sunshine_yellow: #FFCC00;
+  --color-tomato_red: #FF3B30;
+  --color-success_green: #34C759;
   --color-gray: #9F9F9F;
 }
 
@@ -66,6 +66,10 @@
 
 .primary-button {
   @apply bg-deep_blue text-white p-2.5;
+}
+
+.primary-button:disabled {
+  @apply bg-deep_blue opacity-50 text-white p-2.5;
 }
 
 .secondary-button {

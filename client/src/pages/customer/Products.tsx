@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 
 import NavBar from '../../components/NavBar'
@@ -6,11 +6,23 @@ import Footer from '../../components/Footer'
 import ProductsGrid from '../../components/ProductsGrid'
 import ProductCard from '../../components/ProductCard'
 import { sampleProducts } from '../../simulateData/data';
-
-const products = sampleProducts;
+import axios from 'axios';
+import { Product } from '../../data/types';
 
 function Products() {
     const {t} = useTranslation();
+    const [products, setProducts] = useState<Product[]>([]);
+    const handleGetProducts = async () =>{
+      const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/product-list`)
+      return res.data || []
+    }
+    useEffect(()=>{
+      const fetchProducts = async () => {
+      const list = await handleGetProducts();
+      setProducts(list);
+    };
+    fetchProducts();
+    }, [])
   return (
     <div>
         <NavBar />

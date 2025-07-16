@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BsArrowLeft, BsPlusLg, BsDashLg  } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
@@ -14,14 +14,20 @@ import HorizontalImageSlider from '../../components/HorizontalImageSlider'
 
 function ProductDetail() {
     const { t } = useTranslation()
-    const productDetail: Product = product
+    // const productDetail: Product = product
     const [quantity, setQuantity] = useState<number>(1)
+    const [maxQuantity, setMaxQuantity] = useState<number | null>(null)
     const [missingVariants, setMissingVariants] = useState<string[]>([]);
+    const [productDetail, setProductDetail] = useState<Product>(product);
+    const [stock, setStock] = useState<number | null>(null);
 
-
-    const increaseQuantity = () => setQuantity(q => q + 1)
-    const decreaseQuantity = () => setQuantity(q => Math.max(1, q - 1))
-
+    useEffect(()=>{
+        const product = localStorage.getItem("productDetail")
+        if(product){
+            setProductDetail(JSON.parse(product) as Product)
+        }
+    }, [])
+   
     // Find unique variant types (e.g., Color, Size)
     const variantTypes = Array.from(
     new Set(
@@ -41,8 +47,8 @@ function ProductDetail() {
             setMissingVariants([]);
             // Create new cart item with selected options
             const cartItem: CartItem = {
-                productId: productDetail.id,
-                productName: productDetail.name,
+                productId: productDetail.product_id,
+                productName: productDetail.product_name,
                 quantity: quantity,
                 selectedAttributes: selectedAttributes,   // add this!
                 price: productDetail.price,             // optional: store price at time of adding
@@ -78,6 +84,38 @@ function ProductDetail() {
         
     };
 
+    const handleVariantChange = (e, variantType) => {
+        e.preventDefault();
+        setSelectedAttributes(prev => ({
+        ...prev,
+        [variantType]: e.target.value
+        }));
+        setMissingVariants([])
+    }
+
+    useEffect(() => {
+        const matchedCombination = productDetail.combinations.find(combination => {
+            return combination.attribute.every(attr => {
+                const variantName = attr.variant.name;
+                return selectedAttributes[variantName] === attr.value;
+            });
+        });
+
+        if (matchedCombination) {
+            setStock(matchedCombination.stock);
+            // also, update maxQuantity
+            setMaxQuantity(matchedCombination.stock);
+            // if current quantity is more than stock, reset:
+            setQuantity(q => Math.min(q, matchedCombination.stock));
+            if(quantity==0 && matchedCombination.stock > 0){
+                setQuantity(1);
+            }
+        } else {
+            setStock(null);
+            setMaxQuantity(null);
+        }
+    }, [selectedAttributes]);
+
     return (
     <div>
         <NavBar />
@@ -93,10 +131,20 @@ function ProductDetail() {
             </div>
             <form>
             <div className='lg:flex lg:space-x-5'>
-            {/* <img src='/images/pic1.jpg' className='w-100' alt='Product' /> */}
-            <HorizontalImageSlider productId={productDetail.id} numberOfImage={productDetail.number_images}/>
+            <HorizontalImageSlider productId={productDetail.product_id} numberOfImage={productDetail.number_of_images}/>
             <div className='flex flex-col space-y-2.5'>
-                <div className='title'>{productDetail.name}</div>
+                <div>
+                    <div className='title'>{productDetail.product_name}</div>
+                    {stock !== null && (
+                        stock === 0 ? (
+                                <div className='text-gray'>{t('out of stock')}</div>
+                            ) : stock <= 5 ? (
+                                <div className='text-tomato_red'>{t('few left')}: {stock}</div>
+                            ) : (
+                                <div>{t('product left')}: {stock}</div>
+                            )
+                        )}
+                </div>
                 <div className='h1 text-deep_blue'>
                 <PriceTag value={productDetail.price} />
                 </div>
@@ -120,13 +168,7 @@ function ProductDetail() {
                             <select
                                 id={`variant`}
                                 value={selectedAttributes[variantType] || ''}
-                                onChange={e =>{
-                                setSelectedAttributes(prev => ({
-                                    ...prev,
-                                    [variantType]: e.target.value
-                                }));
-                                setMissingVariants([])
-                                }}
+                                onChange={e =>{handleVariantChange(e, variantType)}}
                                 className={`border p-1 ${missingVariants.includes(variantType) ? 'border-red-500' : ''}`}
                             >
                                 <option value='' disabled>{t('select')} {variantType}</option>
@@ -142,12 +184,12 @@ function ProductDetail() {
 
                 <div className='h3'>{t('quantity')}</div>
                 <div className='lg:flex lg:space-x-2.5 items-center justify-around'>
-                <button type='button' onClick={decreaseQuantity}><BsDashLg className='w-auto lg:h-5'/></button>
-                <input value={quantity} min={1} className='text-center h3' onChange={e => {const val = Number(e.target.value); if (val >= 1) setQuantity(val); }}/>
-                <button type='button' onClick={increaseQuantity}><BsPlusLg className='w-auto lg:h-5'/></button>
+                <button type='button' onClick={() => setQuantity(q => {if ((!maxQuantity || q < maxQuantity) && q>1) return q - 1;return q;})}><BsDashLg className='w-auto lg:h-5'/></button>
+                <input disabled={stock==0} value={stock != 0 ? quantity : "n/a"} min={stock != 0 ? 1 : 0} className={`text-center h3 ${stock == 0 ? 'text-gray' : 'text-black'}`} onChange={e => {const val = Number(e.target.value); if (val >= 1) setQuantity(val); }}/>
+                <button type='button' onClick={() => setQuantity(q => {if (!maxQuantity || q < maxQuantity) return q + 1;return q;})} disabled={maxQuantity !== null && quantity >= maxQuantity}><BsPlusLg className='w-auto lg:h-5'/></button>
                 </div>
 
-                <button className='primary-button p-2.5' onClick={addToCart}>{t('add to cart')}</button>
+                <button className='primary-button p-2.5' onClick={addToCart} disabled={stock == 0}>{t('add to cart')}</button>
             </div>
             
             </div>

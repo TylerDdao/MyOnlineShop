@@ -13,7 +13,8 @@ module.exports = {
     insertCustomer,
     getCustomerId,
     insertOrder,
-    getProductDetail
+    getProductDetail,
+    getProductList
 };
 
 async function checkCustomerExists(phone) {
@@ -50,36 +51,39 @@ async function insertOrder(order, customerId) {
     ]);
 }
 
+async function getProductList(){
+    const getListSql = `SELECT * FROM products`
+    const [list] = await pool.query(getListSql);
+    return [list]
+}
+
 async function getProductDetail(productId) {
-    const getProductSql = `SELECT
-        p.product_id AS id,
-        p.product_name AS name,
-        p.number_of_images AS number_images,
+  const getProductSql = `
+    SELECT
+        p.product_id,
+        p.product_name,
+        p.number_of_images,
         p.weight,
         p.price,
         p.description,
-        c.combination_name,
-        GROUP_CONCAT(
-            DISTINCT CONCAT(v.variant_name, ': ', av.value)
-            ORDER BY v.variant_name
-            SEPARATOR ', '
-        ) AS attributes
+        cp.stock,
+        ac.attribute_combination_id,
+        av.attribute_id,
+        av.value AS attribute_value,
+        v.variant_id,
+        v.variant_name
     FROM products p
     JOIN combinations_products cp 
         ON p.product_id = cp.product_id
     JOIN attributes_combinations ac 
         ON cp.attribute_combination_id = ac.attribute_combination_id
-    JOIN combinations c 
-        ON ac.combination_id = c.combination_id
     JOIN attributes_variants av 
         ON ac.attribute_id = av.attribute_id
     JOIN variants v 
         ON av.variant_id = v.variant_id
     WHERE p.product_id = ?
-    GROUP BY
-        p.product_id,
-        p.product_name,
-        c.combination_name;`;
-    const [productRows] = await pool.query(getProductSql, [productId]);
-    return productRows[0];
+    ORDER BY ac.attribute_combination_id, v.variant_name
+  `;
+  const [rows] = await pool.query(getProductSql, [productId]);
+  return rows;
 }

@@ -39,10 +39,10 @@ productId
   }
 
   return (
-    <Link to={`/products/${productDetail?.id}`} onClick={()=>handleClick()}>
-      <div id={`${productDetail?.id}`} className="w-[150px] lg:w-[300px]">
-      <img src={`/images/products/${productDetail?.id}/1.jpg`} className='w-max h-auto'/>
-      <div className='text-black lg:text-[24px] p'>{productDetail?.name}</div>
+    <Link to={`/products/${productDetail?.product_id}`} onClick={()=>handleClick()}>
+      <div id={`${productDetail?.product_id}`} className="w-[150px] lg:w-[300px]">
+      <img src={`/images/products/${productDetail?.product_id}/1.jpg`} className='w-max h-auto'/>
+      <div className='text-black lg:text-[24px] p'>{productDetail?.product_name}</div>
       <PriceTag value={productDetail?.price} className='lg:h2 h3 text-deep_blue'/>
       </div>
       <button className="primary-button w-full">{t('detail')}</button>

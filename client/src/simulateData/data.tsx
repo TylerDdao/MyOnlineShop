@@ -61,11 +61,11 @@ export let variants = [
 // variants.filter(v=> v.name=="Size" || v.name == "Color").map(variant => variant.name)
 export const sampleProducts: Product[] = [
   {
-    id: '1',
-    name: 'Classic T-Shirt',
+    product_id: '1',
+    product_name: 'Classic T-Shirt',
     description: 'A comfortable cotton t-shirt perfect for everyday wear.',
     price: 19.99,
-    number_images: 3,
+    number_of_images: 3,
     combinations: [
       {
         attribute: [
@@ -85,11 +85,11 @@ export const sampleProducts: Product[] = [
     weight: 0.5
   },
   {
-    id: '2',
-    name: 'Wireless Mouse',
+    product_id: '2',
+    product_name: 'Wireless Mouse',
     description: 'Ergonomic wireless mouse with long battery life.',
     price: 29.99,
-    number_images: 4,
+    number_of_images: 4,
     combinations: [
       {
         attribute: [
@@ -107,11 +107,11 @@ export const sampleProducts: Product[] = [
     weight: 0.5
   },
   {
-    id: '3',
-    name: 'Stainless Steel Water Bottle',
+    product_id: '3',
+    product_name: 'Stainless Steel Water Bottle',
     description: 'Keeps your drinks hot or cold for up to 12 hours.',
     price: 15.99,
-    number_images: 2,
+    number_of_images: 2,
     combinations: [
       {
         attribute: [
@@ -129,11 +129,11 @@ export const sampleProducts: Product[] = [
     weight: 0.5
   },
   {
-    id: '4',
-    name: 'Bluetooth Headphones',
+    product_id: '4',
+    product_name: 'Bluetooth Headphones',
     description: 'Noise-cancelling headphones with clear sound quality.',
     price: 59.99,
-    number_images: 5,
+    number_of_images: 5,
     combinations: [
       {
         attribute: [
@@ -151,11 +151,11 @@ export const sampleProducts: Product[] = [
     weight: 0.5
   },
   {
-    id: '5',
-    name: 'Leather Wallet',
+    product_id: '5',
+    product_name: 'Leather Wallet',
     description: 'Slim and stylish leather wallet with multiple compartments.',
     price: 24.99,
-    number_images: 3,
+    number_of_images: 3,
     combinations: [
       {
         attribute: [
@@ -177,11 +177,11 @@ export const sampleProducts: Product[] = [
 
 
 export const product: Product = {
-  id: "1",
-  name: "T-Shirt",
+  product_id: "1",
+  product_name: "T-Shirt",
   price: 250000,
   description: "This is a good product that you should have!!",
-  number_images: 3,
+  number_of_images: 3,
   combinations: [
     {
       stock: 10,
