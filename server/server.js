@@ -40,6 +40,7 @@ const app = express();
 app.use(express.json());
 
 const sql_functions = require('./sql_functions');
+const { STATUS_CODES } = require('http');
 
 
 // Allow requests from your frontend (adjust origin as needed)
@@ -94,13 +95,32 @@ app.get('/api/shipment-fee', async (req, res) => {
   }
 });
 
+app.post('/api/login', async(req, res) =>{
+  try {
+    const user = req.body;
+    const user_id = await sql_functions.verifyLogin(user)
+    if(user_id >=0){
+      res.status(200)
+      res.json({ success: true, message: 'login success', user_id: user_id})
+    }
+    else{
+      res.status(401)
+      res.json({success: false, message: "Incorrect user name or password"})
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+    res.json({message: error})
+  }
+});
+
 app.get('/api/verify-orderid', async (req, res) => {
   try {
-    const orderId = req.query.id;
-    if (!orderId) return res.status(400).json({ error: 'Missing id in query' });
+    const order_id = req.query.id;
+    if (!order_id) return res.status(400).json({ error: 'Missing id in query' });
 
-    const [rows] = await pool.query('SELECT * FROM orders WHERE order_id = ?', [orderId]);
-    console.log('Querying MySQL for order ID:', orderId);
+    const [rows] = await pool.query('SELECT * FROM orders WHERE order_id = ?', [order_id]);
+    console.log('Querying MySQL for order ID:', order_id);
     res.json({ isValid: rows.length === 0 });
   } catch (error) {
     console.error('Error querying MySQL:', error);
@@ -109,11 +129,20 @@ app.get('/api/verify-orderid', async (req, res) => {
 });
 
 app.get('/api/product-list', async (req, res) =>{
+  const query = req.query.query
   try {
-    const [productList] = await sql_functions.getProductList();
-    console.dir(productList, { depth: null });
-    res.status(200)
-    res.json(productList)
+    if(query){
+      const [productList] = await sql_functions.getProducts(query);
+      console.dir(productList, { depth: null });
+      res.status(200)
+      res.json(productList)
+    }
+    else{
+      const [productList] = await sql_functions.getProductList();
+      console.dir(productList, { depth: null });
+      res.status(200)
+      res.json(productList)
+    }
   } catch (error) {
     console.log(error)
     res.status(500).json(error)
@@ -173,26 +202,80 @@ app.get('/api/product-detail', async (req, res) => {
 });
 
 
-app.post('/api/orders',async  (req, res) => {
+app.post('/api/place-order',async  (req, res) => {
   const order = req.body;  // req.body now contains the whole Order object
 
   console.log('✅ Received order from frontend:');
   console.dir(order, { depth: null }); // print deeply nested object
 
   try {
-    const customerExists = await sql_functions.checkCustomerExists(order.customer.phone);
+    const customerExists = await sql_functions.checkCustomerExists(order.customer.customer_phone);
     if(!customerExists) {
       await sql_functions.insertCustomer(order.customer);
     }
-    const customerId = await sql_functions.getCustomerId(order.customer.phone);
-
-    insertOrder(order, customerId);
+    const customer_id = await sql_functions.getCustomerId(order.customer.customer_phone);
+    sql_functions.insertOrder(order, customer_id);
+    const result = sql_functions.insertOrderItem(order)
+    if(result){
+      res.status(200)
+      res.json({ success: true, message: 'Order received', orderId: order.id });
+    }
+    else{
+      throw Error(message = result?.message)
+    }
   } catch (error) {
     console.log(error)
+    res.json({ success: false, message: error.message, orderId: order.id });
   }
-
-  res.json({ success: true, message: 'Order received', orderId: order.id });
 });
+
+app.get('/api/search-order', async (req, res) => {
+  try {
+    const order_id = req.query.order_id
+    const order = await sql_functions.getOrder(order_id)
+    if(order){
+      res.status(200)
+      res.json({success: true, message: "Order found", order: order})
+    }
+    else{
+      res.status(404)
+      res.json({success: false, message: "Order can't be found"})
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+    res.json({success: false, message: "Failed to search for order, please try again"})
+  }
+})
+
+app.get('/api/search-product', async (req,res) =>{
+  try {
+    const query = req.query.query
+    const products = await sql_functions.getProducts(query);
+    console.log(products)
+  } catch (error) {
+    
+  }
+})
+
+app.get('/api/test', async (req, res)=>{
+  try {
+    const order_id = req.query.order_id
+    const order = await sql_functions.getOrder(order_id)
+    if(order){
+      res.status(200)
+      res.json({success: true, message: "Order found", order: order})
+    }
+    else{
+      res.status(404)
+      res.json({success: false, message: "Order can't be found"})
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+    res.json({success: false, message: "Failed to search for order, please try again"})
+  }
+})
 
 const PORT = 4000;
 app.listen(PORT, () => {

@@ -47,11 +47,11 @@ function ProductDetail() {
             setMissingVariants([]);
             // Create new cart item with selected options
             const cartItem: CartItem = {
-                productId: productDetail.product_id,
-                productName: productDetail.product_name,
+                product_id: productDetail.product_id,
+                product_name: productDetail.product_name,
                 quantity: quantity,
                 selectedAttributes: selectedAttributes,   // add this!
-                price: productDetail.price,             // optional: store price at time of adding
+                price_at_order: productDetail.price,             // optional: store price at time of adding
                 weight: product.weight * quantity
             };
 
@@ -61,7 +61,7 @@ function ProductDetail() {
 
             // Check if the same product with same selectedAttributes is already in cart
             const existingItemIndex = existingCart.findIndex(item =>
-                item.productId === cartItem.productId &&
+                item.product_id === cartItem.product_id &&
                 JSON.stringify(item.selectedAttributes) === JSON.stringify(cartItem.selectedAttributes)
             );
 

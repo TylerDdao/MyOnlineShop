@@ -252,36 +252,36 @@ export const product: Product = {
 
 const cartItems: CartItem[] = [
   {
-    productId: '1',
-    productName: 'Classic White T-Shirt',
+    product_id: '1',
+    product_name: 'Classic White T-Shirt',
     quantity: 2,
     selectedAttributes: {
       Size: 'M',
       Color: 'White'
     },
-    price: 19.99,
+    price_at_order: 19.99,
     weight: 1
   },
   {
-    productId: '2',
-    productName: 'Blue Denim Jeans',
+    product_id: '2',
+    product_name: 'Blue Denim Jeans',
     quantity: 1,
     selectedAttributes: {
       Size: '32',
       Fit: 'Slim'
     },
-    price: 49.99,
+    price_at_order: 49.99,
     weight: 0.5
   }
 ];
 
 
 export const order: Order = {
-  id: 1,
+  order_id: 1,
   customer: {
-    name: "Tyler Dao",
-    phone: "0964243434",
-    email: "baonam6a3@gmail.com",
+    customer_name: "Tyler Dao",
+    customer_phone: "0964243434",
+    customer_email: "baonam6a3@gmail.com",
   },
   address: {
     city: "Hanoi",
@@ -292,12 +292,115 @@ export const order: Order = {
     wardId: "00001",
     street: "123 Pho Hue Street",
   },
-  payment: "cash on delivery",   // or "bank transfer"
+  payment_type: "cash on delivery",   // or "bank transfer"
   subtotal: 1500000,             // for example: 1,500,000 VND
-  deliveryFee: 30000,            // e.g., 30,000 VND
+  delivery_fee: 30000,            // e.g., 30,000 VND
   note: "Please call me before delivery",
-  status: "in process",
+  status: "on prepared",
   cart: cartItems,
-  total_weight: 0,
+  weight: 1.5,
   arrival_date: "2025-7-01"
 };
+
+export const orders: Order[] = [
+  {
+  order_id: 1,
+  customer: {
+    customer_name: "Tyler Dao",
+    customer_phone: "0964243434",
+    customer_email: "baonam6a3@gmail.com",
+  },
+  address: {
+    city: "Hanoi",
+    cityId: "01",
+    district: "Ba Dinh",
+    districtId: "001",
+    ward: "Phuc Xa",
+    wardId: "00001",
+    street: "123 Pho Hue Street",
+  },
+  payment_type: "cash on delivery",   // or "bank transfer"
+  subtotal: 1500000,             // for example: 1,500,000 VND
+  delivery_fee: 30000,            // e.g., 30,000 VND
+  note: "Please call me before delivery",
+  status: "on prepared",
+  cart: cartItems,
+  weight: 1.5,
+  arrival_date: "2025-07-15"
+},
+{
+  order_id: 2,
+  customer: {
+    customer_name: "Tyler Dao",
+    customer_phone: "0964243434",
+    customer_email: null,
+  },
+  address: {
+    city: "Hanoi",
+    cityId: "01",
+    district: "Ba Dinh",
+    districtId: "001",
+    ward: "Phuc Xa",
+    wardId: "00001",
+    street: "123 Pho Hue Street",
+  },
+  payment_type: "cash on delivery",   // or "bank transfer"
+  subtotal: 1500000,             // for example: 1,500,000 VND
+  delivery_fee: 30000,            // e.g., 30,000 VND
+  note: "Please call me before delivery",
+  status: "on prepared",
+  cart: cartItems,
+  weight: 1.5,
+  arrival_date: null
+},
+{
+  order_id: 3,
+  customer: {
+    customer_name: "Tyler Dao",
+    customer_phone: "0964243434",
+    customer_email: null,
+  },
+  address: {
+    city: "Hanoi",
+    cityId: "01",
+    district: "Ba Dinh",
+    districtId: "001",
+    ward: "Phuc Xa",
+    wardId: "00001",
+    street: "123 Pho Hue Street",
+  },
+  payment_type: "bank transfer",   // or "bank transfer"
+  subtotal: 1500000,             // for example: 1,500,000 VND
+  delivery_fee: 30000,            // e.g., 30,000 VND
+  note: "Please call me before delivery",
+  status: "on hold",
+  cart: cartItems,
+  weight: 1.5,
+  arrival_date: null
+},
+{
+  order_id: 4,
+  customer: {
+    customer_name: "Tyler Dao",
+    customer_phone: "0964243434",
+    customer_email: "baonam6a3@gmail.com",
+  },
+  address: {
+    city: "Hanoi",
+    cityId: "01",
+    district: "Ba Dinh",
+    districtId: "001",
+    ward: "Phuc Xa",
+    wardId: "00001",
+    street: "123 Pho Hue Street",
+  },
+  payment_type: "bank transfer",   // or "bank transfer"
+  subtotal: 1500000,             // for example: 1,500,000 VND
+  delivery_fee: 30000,            // e.g., 30,000 VND
+  note: "Please call me before delivery",
+  status: "on prepared",
+  cart: cartItems,
+  weight: 1.5,
+  arrival_date: "2025-07-19"
+}
+];

@@ -21,19 +21,19 @@ function Confirm() {
         return saved
           ? JSON.parse(saved) as Order
           : {
-                customer: { name: '', phone: '', email: null },
+                customer: { customer_name: '', customer_phone: '', customer_email: null },
                 address: {
                 city: '', cityId: '', district: '', districtId: '',
                 ward: '', wardId: '', street: ''
                 },
-                payment: 'cash on delivery',
+                payment_type: 'cash on delivery',
                 subtotal: 0,
-                deliveryFee: -1,
+                delivery_fee: -1,
                 note: null,
-                id: -1,
+                order_id: -1,
                 status: 'unknown',
                 cart: null,
-                total_weight: 0,
+                weight: 0,
                 arrival_date: null
             };
       });
@@ -43,7 +43,7 @@ function Confirm() {
     }
 
     useEffect(() => {
-        setOrderId(orderData.id ?? null);
+        setOrderId(orderData.order_id ?? null);
         cleanCache();
     }, []);
 
@@ -53,7 +53,7 @@ function Confirm() {
             <div className='min-h-screen flex flex-col items-center justify-center py-20'>
                 <div className='flex flex-col justify-center text-center lg:space-y-2.5'>
                     <div className='title text-deep_blue'>{t('your order has been placed!')}</div>
-                    {orderData.id !== -1 ? (
+                    {orderData.order_id !== -1 ? (
                         <div>
                             <div className='h1'>{t('your order id is')}: <span className='h1 text-deep_blue'>{(orderId ?? "null")}</span></div>
                             <div className='h2_b'>{t('please save the order id to track your order')}</div>

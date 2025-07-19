@@ -8,12 +8,20 @@ import ProductCard from '../../components/ProductCard'
 import { sampleProducts } from '../../simulateData/data';
 import axios from 'axios';
 import { Product } from '../../data/types';
+import { useLocation } from 'react-router-dom';
 
 function Products() {
     const {t} = useTranslation();
     const [products, setProducts] = useState<Product[]>([]);
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const query = searchParams.get('query');
     const handleGetProducts = async () =>{
-      const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/product-list`)
+      const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/product-list`, {
+        params:{
+          query: query
+        }
+      })
       return res.data || []
     }
     useEffect(()=>{

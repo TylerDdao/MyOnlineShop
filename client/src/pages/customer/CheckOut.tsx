@@ -40,25 +40,25 @@ function CheckOut() {
     return saved
       ? JSON.parse(saved) as Order
       : {
-            customer: { name: '', phone: '', email: null },
+            customer: { customer_name: '', customer_phone: '', customer_email: null },
             address: {
             city: '', cityId: '', district: '', districtId: '',
             ward: '', wardId: '', street: ''
             },
-            payment: 'cash on delivery',
+            payment_type: 'cash on delivery',
             subtotal: 0,
-            deliveryFee: -1,
+            delivery_fee: -1,
             note: null,
-            id: -1,
+            order_id: -1,
             status: 'unknown',
             cart: null,
-            total_weight: 0,
+            weight: 0,
             arrival_date: null
         };
   });
 
   useEffect(()=>{
-    if(orderData.id === -1){
+    if(orderData.order_id === -1){
       navigate("/")
     }
   }, [])
@@ -115,7 +115,7 @@ function CheckOut() {
     const [cart, setCart] = useState<CartItem[]>([])
     
   const subtotal = useMemo(() => {
-    return cart.reduce((sum, item) => sum + (item.price ?? 0) * (item.quantity ?? 1), 0)
+    return cart.reduce((sum, item) => sum + (item.price_at_order ?? 0) * (item.quantity ?? 1), 0)
   }, [cart])
 
   const totalWeight = useMemo(() => {
@@ -127,7 +127,7 @@ function CheckOut() {
 const handleDeliveryFee = async () => {
   try {
     console.log('Fetching shipment fee with params:', {
-      weight: orderData.total_weight,
+      weight: orderData.weight,
       province: orderData.address.city,
       district: orderData.address.district,
       ward: orderData.address.ward,
@@ -136,7 +136,7 @@ const handleDeliveryFee = async () => {
 
     const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/shipment-fee`, {
       params: {
-        weight: orderData.total_weight,
+        weight: orderData.weight,
         province: orderData.address.city,
         district: orderData.address.district,
         ward: orderData.address.ward,
@@ -148,7 +148,7 @@ const handleDeliveryFee = async () => {
     if (response.data?.fee?.fee !== undefined) {
       setOrderData(prev => ({
         ...prev,
-        deliveryFee: response.data.fee.fee
+        delivery_fee: response.data.fee.fee
       }));
     } else {
       console.warn('fee.fee is missing in response, setting deliveryFee to 0:', response.data);
@@ -164,13 +164,13 @@ const handleDeliveryFee = async () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { name, phone } = orderData.customer;
+    const { customer_name, customer_phone } = orderData.customer;
     const { city, district, ward, street } = orderData.address;
-    if (!name || !phone || !city || !district || !ward || !street) {
+    if (!customer_name || !customer_phone || !city || !district || !ward || !street) {
       alert(t('please fill all the required fields'));
       return;
     }
-    setOrderData(prev => ({ ...prev, subtotal: subtotal, total_weight: totalWeight }));
+    setOrderData(prev => ({ ...prev, subtotal: subtotal, weight: totalWeight }));
     setIsLoading(true)
     await handleDeliveryFee();
     setIsLoading(false)
@@ -206,27 +206,27 @@ const handleDeliveryFee = async () => {
                   <div className='lg:flex lg:flex-col lg:space-y-2.5'>
                     <div className='h3'>{t('your name')} <span className='text-tomato_red'>*</span></div>
                     <input type='text' className='w-full' placeholder={t('enter your name')}
-                      value={orderData.customer.name}
+                      value={orderData.customer.customer_name}
                       onChange={e => setOrderData(prev => ({
-                        ...prev, customer: { ...prev.customer, name: e.target.value }
+                        ...prev, customer: { ...prev.customer, customer_name: e.target.value }
                       }))}
                     />
                   </div>
                   <div className='lg:flex lg:flex-col lg:space-y-2.5'>
                     <div className='h3'>{t('your phone number')} <span className='text-tomato_red'>*</span></div>
                     <input type='tel' className='w-full' placeholder={t('enter your phone number')}
-                      value={orderData.customer.phone}
+                      value={orderData.customer.customer_phone}
                       onChange={e => setOrderData(prev => ({
-                        ...prev, customer: { ...prev.customer, phone: e.target.value }
+                        ...prev, customer: { ...prev.customer, customer_phone: e.target.value }
                       }))}
                     />
                   </div>
                   <div className='lg:flex lg:flex-col lg:space-y-2.5'>
                     <div className='h3'>{t('your email')}</div>
                     <input type='email' className='w-full' placeholder={t('enter your email')}
-                      value={orderData.customer.email ?? ''}
+                      value={orderData.customer.customer_email ?? ''}
                       onChange={e => setOrderData(prev => ({
-                        ...prev, customer: { ...prev.customer, email: e.target.value }
+                        ...prev, customer: { ...prev.customer, customer_email: e.target.value }
                       }))}
                     />
                   </div>

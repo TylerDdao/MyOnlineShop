@@ -8,7 +8,6 @@
   "checkout": "Checkout",
   "my order": "My Order",
   "shop now": "Shop Now",
-
   "my cart" : "My Cart",
   "subtotal" : "Subtotal",
   "total" : "Total",
@@ -64,5 +63,14 @@
   "enter your order id": "Enter your order ID",
   "find order": "Find order",
   "track your order": "Track your order",
-  "clear cart": "Clear cart"
+  "clear cart": "Clear cart",
+  "detail": "Detail",
+  "select": "Select",
+  "add to cart": "Add to cart",
+  "back": "Back",
+  "few left": "Few left",
+  "out of stock": "Out of stock",
+  "product left": "Product left",
+  "added to cart": "Added to cart",
+  "note: please use the old address before merging": "Note: Please use the old address before merging"
 }

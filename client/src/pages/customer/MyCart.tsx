@@ -16,27 +16,22 @@ const location = useLocation()
 
 // Load cart from localStorage once
 const [cart, setCart] = useState<CartItem[]>([])
-const [order, setOrder] = useState<Order>(() => {
-  const saved = localStorage.getItem('order');
-  return saved
-    ? JSON.parse(saved) as Order
-    : {
-        customer: { name: '', phone: '', email: null },
-        address: {
-        city: '', cityId: '', district: '', districtId: '',
-        ward: '', wardId: '', street: ''
-        },
-        payment: 'cash on delivery',
-        subtotal: 0,
-        deliveryFee: -1,
-        note: null,
-        id: 0,
-        status: 'unknown',
-        cart: null,
-        total_weight: 0,
-        arrival_date: null
-      };
-  });
+const [order, setOrder] = useState<Order>(() => ({
+    customer: { customer_name: '', customer_phone: '', customer_email: null },
+    address: {
+      city: '', cityId: '', district: '', districtId: '',
+      ward: '', wardId: '', street: ''
+    },
+    payment_type: 'cash on delivery',
+    subtotal: 0,
+    delivery_fee: -1,
+    note: null,
+    order_id: 0,
+    status: 'unknown',
+    cart: null,
+    weight: 0,
+    arrival_date: null
+ }));
 
 useEffect(() => {
   const savedCart = localStorage.getItem('cart');
@@ -51,11 +46,11 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-  const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  const total_weight = cart.reduce((total_weight, item) => total_weight + item.weight, 0);
-  const updatedOrder = { ...order, subtotal, cart, total_weight};
+  const subtotal = cart.reduce((total, item) => total + item.price_at_order * item.quantity, 0);
+  const weight = cart.reduce((weight, item) => weight + item.weight, 0);
+  const updatedOrder = { ...order, subtotal, cart, weight};
   setOrder(updatedOrder);
-  // alert(order?.total_weight)
+  setOrder(prev =>({...prev, order_id: 0}))
   localStorage.setItem('order', JSON.stringify(updatedOrder));
 }, [cart]);
 
@@ -77,7 +72,7 @@ return (
             <ProductCartList removeable={true} cartList={cart} 
                 onRemove={(id, selectedAttributes) => {
                 const newCart = cart.filter(item =>
-                !(item.productId === id && JSON.stringify(item.selectedAttributes) === JSON.stringify(selectedAttributes))
+                !(item.product_id === id && JSON.stringify(item.selectedAttributes) === JSON.stringify(selectedAttributes))
                 );
                 setCart(newCart);
                 localStorage.setItem('cart', JSON.stringify(newCart));

@@ -4,9 +4,9 @@ export interface Address{
 }
 
 export interface Customer {
-  name: string;
-  phone: string;
-  email: string | null;
+  customer_name: string;
+  customer_phone: string;
+  customer_email: string | null;
 }
 
 export interface AddressData {
@@ -46,13 +46,13 @@ export type Product = {
 };
 
 export type CartItem = {
-  productId: string;
-  productName:string
+  product_id: string;
+  product_name:string
   quantity: number;
   selectedAttributes: {
     [variantType: string]: string;
   };
-  price: number;
+  price_at_order: number;
   weight: number;
 };
 
@@ -60,14 +60,14 @@ export type CartItem = {
 export type Order = {
   customer: Customer;
   address: AddressData;
-  id: number | null;
-  payment: 'cash on delivery' | 'bank transfer';
+  order_id: number | null;
+  payment_type: 'cash on delivery' | 'bank transfer';
   subtotal: number;
-  deliveryFee: number | null;
+  delivery_fee: number | null;
   note: string | null;
-  status: string | null;
+  status: "unknown" | "on hold" | "on prepared" | "on delivered" | "done" | "cancelled" | "refunded"
   cart: CartItem[] | null;
-  total_weight: number ;
+  weight: number ;
   arrival_date?: string | null; // Optional field for estimated arrival date
 };
 
@@ -107,3 +107,9 @@ export type ShipmentFeeResponse = {
   };
   message: string;
 };
+
+export type User ={
+  user_id: number | null;
+  user_name: string | null;
+  password: string | null;
+}

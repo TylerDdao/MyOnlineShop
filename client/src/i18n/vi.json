@@ -62,5 +62,14 @@
   "enter your order id": "Nhập mã đơn hàng của bạn",
   "find order": "Tìm đơn hàng",
   "track your order": "Theo dõi đơn hàng",
-  "clear cart": "Xóa giỏ hàng"
+  "clear cart": "Xóa giỏ hàng",
+  "detail": "Chi tiết",
+  "select": "Chọn",
+  "add to cart": "Thêm vào giỏ hàng",
+  "back": "Trở lại",
+  "few left": "Sắp hết hàng",
+  "out of stock": "Hết hàng",
+  "product left": "Còn lại",
+  "added to cart": "Đã thêm vào giỏ hàng",
+  "note: please use the old address before merging": "Lưu ý: Vui lòng sử dụng địa chĩ cũ trước khi sáp nhập"
 }

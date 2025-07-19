@@ -35,26 +35,26 @@ function Payment() {
         setPaymentMethod(method);
         setNextStepUrl(method === 'bank transfer' ? '/bank-transfer' : '/confirm');
         setNextStep(method === 'bank transfer' ? 'bank transfer' : 'confirm');
-        setOrderData(prev => ({ ...prev, payment: method as 'cash on delivery' | 'bank transfer' }));
+        setOrderData(prev => ({ ...prev, payment_type: method as 'cash on delivery' | 'bank transfer' }));
     }
     const [orderData, setOrderData] = useState<Order>(() => {
         const saved = localStorage.getItem('order');
         return saved
             ? JSON.parse(saved) as Order
             : {
-                customer: { name: '', phone: '', email: null },
+                customer: { customer_name: '', customer_phone: '', customer_email: null },
                 address: {
                 city: '', cityId: '', district: '', districtId: '',
                 ward: '', wardId: '', street: ''
                 },
-                payment: 'cash on delivery',
+                payment_type: 'cash on delivery',
                 subtotal: 0,
-                deliveryFee: -1,
+                delivery_fee: -1,
                 note: null,
-                id: -1,
+                order_id: -1,
                 status: 'unknown',
                 cart: null,
-                total_weight: 0,
+                weight: 0,
                 arrival_date: null
             };
     });
@@ -72,15 +72,15 @@ function Payment() {
             }
         }
 
-        const status = orderData.payment == 'bank transfer'
+        const status: Order["status"] = orderData.payment_type == 'bank transfer'
             ? "on hold"
-            : orderData.payment == 'cash on delivery'
+            : orderData.payment_type == 'cash on delivery'
                 ? "on prepared"
                 : "unknown";
 
         const newOrderData = {
             ...orderData,
-            id: orderId,
+            order_id: orderId,
             status
         };
 
@@ -89,7 +89,7 @@ function Payment() {
 
         // send order with correct id
         try {
-            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/orders`, newOrderData);
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/place-order`, newOrderData);
             console.log('Order submitted successfully:', response.data);
             sentToServer.current = true;
             return response.data;
@@ -111,7 +111,8 @@ function Payment() {
             navigate(`${nextStepUrl}`)
         } catch (error) {
             console.error("Error while verifying order ID:", error);
-            alert("Failed to generate unique order ID. Please try again.");
+            alert("Failed to place order. Please try again.");
+            navigate('/')
         }
     };
 
@@ -120,8 +121,8 @@ function Payment() {
     }, [orderData]);
 
     useEffect(() => {
-        setNextStepUrl(orderData.payment === 'bank transfer' ? '/bank-transfer' : '/confirm');
-        setNextStep(orderData.payment === 'bank transfer' ? 'bank transfer' : 'confirm');
+        setNextStepUrl(orderData.payment_type === 'bank transfer' ? '/bank-transfer' : '/confirm');
+        setNextStep(orderData.payment_type === 'bank transfer' ? 'bank transfer' : 'confirm');
         const savedCart = localStorage.getItem('cart')
         if (savedCart) {
             try {
@@ -155,16 +156,16 @@ function Payment() {
                             <div className='h1'>{t('your contact information')}</div>
                             <div className='lg:flex lg:flex-col lg:space-y-2.5'>
                                 <div className='h3'>{t('your name')}</div>
-                                <input id='name' type='text' className='w-full' value={orderData.customer.name} disabled/>
+                                <input id='name' type='text' className='w-full' value={orderData.customer.customer_name} disabled/>
                             </div>
                             <div className='lg:flex lg:flex-col lg:space-y-2.5'>
                                 <div className='h3'>{t('your phone number')}</div>
-                                <input id='phone' type='tel' className='w-full' value={orderData.customer.phone} disabled/>
+                                <input id='phone' type='tel' className='w-full' value={orderData.customer.customer_phone} disabled/>
                             </div>
                             <div className='lg:flex lg:flex-col lg:space-y-2.5'>
                                 <div className='h3'>{t('your email')}</div>
-                                {orderData.customer.email ? (
-                                    <input id='email' type='email' className='w-full' value={orderData.customer.email} disabled/>
+                                {orderData.customer.customer_email ? (
+                                    <input id='email' type='email' className='w-full' value={orderData.customer.customer_email} disabled/>
                                 ) : (
                                     <input id='email' type='email' className='w-full text-gray' value={t('no email')} disabled/>
                                 )}
@@ -207,11 +208,11 @@ function Payment() {
                         </div>
                         <div className='lg:flex lg:justify-between'>
                             <div className='lg:text-[18.72px]'>{t('delivery fee')}</div>
-                            {orderData.deliveryFee !== undefined && orderData.deliveryFee !== null ? (
-                                orderData.deliveryFee === 0 ? (
+                            {orderData.delivery_fee !== undefined && orderData.delivery_fee !== null ? (
+                                orderData.delivery_fee === 0 ? (
                                     <div className='h2 text-success_green'>{t('free')}</div>
                                 ) : (
-                                    <PriceTag className='h2' value={orderData.deliveryFee}/>
+                                    <PriceTag className='h2' value={orderData.delivery_fee}/>
                                 )
                             ) : (
                                 <div>{t('loading')}</div>
@@ -220,7 +221,7 @@ function Payment() {
                         <div className='border-[1px] border'></div>
                         <div className='lg:flex lg:justify-between'>
                             <div className='h1'>{t('total')}</div>
-                            <PriceTag value={(orderData.deliveryFee ?? 0) + orderData.subtotal} className='h1'/>
+                            <PriceTag value={(orderData.delivery_fee ?? 0) + orderData.subtotal} className='h1'/>
                         </div>
 
                         <div className='flex flex-col'>
@@ -228,7 +229,7 @@ function Payment() {
                             <div className='flex flex-col space-y-2.5'>
                                 {paymentOptions.map((option, index) => (
                                 <label key={index} className='h2_b flex items-center space-x-2.5 cursor-pointer'>
-                                <input value={option.value} type='radio' name='payment-method' key={index} className='h1' checked={orderData.payment === option.value} onChange={handlePaymentMethodChange}/>
+                                <input value={option.value} type='radio' name='payment-method' key={index} className='h1' checked={orderData.payment_type === option.value} onChange={handlePaymentMethodChange}/>
                                 <span className=''>{t(option.value)} {option.icon}</span>
                                 </label>
                                 ))}

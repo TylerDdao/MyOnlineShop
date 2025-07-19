@@ -35,19 +35,19 @@ function BankTransfer() {
             return saved
                 ? JSON.parse(saved) as Order
                 : {
-                    customer: { name: '', phone: '', email: null },
+                    customer: { customer_name: '', customer_phone: '', customer_email: null },
                     address: {
                     city: '', cityId: '', district: '', districtId: '',
                     ward: '', wardId: '', street: ''
                     },
-                    payment: 'cash on delivery',
+                    payment_type: 'cash on delivery',
                     subtotal: 0,
-                    deliveryFee: -1,
+                    delivery_fee: -1,
                     note: null,
-                    id: -1,
+                    order_id: -1,
                     status: 'unknown',
                     cart: null,
-                    total_weight: 0,
+                    weight: 0,
                     arrival_date: null
                 };
         });
@@ -55,10 +55,10 @@ function BankTransfer() {
     const bank = import.meta.env.VITE_BANK;
     const accountNumber = import.meta.env.VITE_ACCOUNT_NUMBER;
     const accountName = import.meta.env.VITE_ACCOUNT_NAME;
-    const qrUrl = `https://qr.sepay.vn/img?acc=${accountNumber}&bank=${bank}&amount=${orderData.subtotal + (orderData.deliveryFee??0)}&des=${orderData.id}&template=compact`
+    const qrUrl = `https://qr.sepay.vn/img?acc=${accountNumber}&bank=${bank}&amount=${orderData.subtotal + (orderData.delivery_fee??0)}&des=${orderData.order_id}&template=compact`
 
     useEffect(()=>{
-        if(orderData.id === -1){
+        if(orderData.order_id === -1){
           navigate("/")
         }
     }, [])
@@ -82,18 +82,18 @@ function BankTransfer() {
                             <div className='h1'>{t('your contact information')}</div>
                             <div className='lg:flex lg:flex-col lg:space-y-2.5'>
                                 <div className='h3'>{t('your name')}</div>
-                                <div className='p'>{orderData.customer.name}</div>
+                                <div className='p'>{orderData.customer.customer_name}</div>
                             </div>
                             <div className='lg:flex lg:flex-col lg:space-y-2.5'>
                                 <div className='h3'>{t('your phone number')}</div>
-                                <div className='p'>{orderData.customer.phone}</div>
+                                <div className='p'>{orderData.customer.customer_phone}</div>
                             </div>
                             <div className='lg:flex lg:flex-col lg:space-y-2.5'>
                                 <div className='h3'>{t('your email')}</div>
-                                {orderData.customer.email ? (
-                                    <div className='p'>{orderData.customer.email}</div>
+                                {orderData.customer.customer_email ? (
+                                    <div className='p'>{orderData.customer.customer_email}</div>
                                 ):(
-                                    <div className='p text-gray'>{orderData.customer.email}</div>
+                                    <div className='p text-gray'>{orderData.customer.customer_email}</div>
                                 )}
                             </div>
 
@@ -131,7 +131,7 @@ function BankTransfer() {
                         <img src={qrUrl} alt='QR Code' className='w-auto lg:h-[360px]'/>
                         <div className='lg:flex lg:flex-col lg:space-y-2.5'>
                             <div className='flex lg:space-x-2.5 items-center'>
-                            <div className='p'>{t('amount')}: <PriceTag className='h3 text-deep_blue' value={orderData.subtotal + (orderData.deliveryFee ?? 0)}/></div>
+                            <div className='p'>{t('amount')}: <PriceTag className='h3 text-deep_blue' value={orderData.subtotal + (orderData.delivery_fee ?? 0)}/></div>
                                 <button onClick={()=>handleCopy('amount',total.toString())}>
                                     {copiedField === 'amount' ? (
                                     <BsCheck className="text-green-500 text-xl" />
@@ -142,8 +142,8 @@ function BankTransfer() {
                             </div>
                             <div className='lg:flex lg:flex-col lg:spcae-y-2.5'>
                                 <div className='flex lg:space-x-2.5 items-center'>
-                                    <div className='p'>{t('description')}: <span className='h3 text-deep_blue'>{orderData.id}</span></div>
-                                    <button onClick={()=>handleCopy('description',orderData.id)}>
+                                    <div className='p'>{t('description')}: <span className='h3 text-deep_blue'>{orderData.order_id}</span></div>
+                                    <button onClick={()=>handleCopy('description',orderData.order_id)}>
                                         {copiedField === 'description' ? (
                                         <BsCheck className="text-green-500 text-xl" />
                                         ) : (

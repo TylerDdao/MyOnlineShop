@@ -20,16 +20,16 @@ const ProductCartCard: React.FC<ProductCartCardProps> = ({
   onRemove = () => {},
 }) => {
   const { t } = useTranslation();
-  const totalPrice = cartItem.price * cartItem.quantity;
+  const totalPrice = cartItem.price_at_order * cartItem.quantity;
 
   return (
     <Link to={url} className="block w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2.5 text-left">
-          <img src={`/images/products/${cartItem.productId}/1.jpg`} className='w-auto max-h-[100px] ' alt={cartItem.productName} />
+          <img src={`/images/products/${cartItem.product_id}/1.jpg`} className='w-auto max-h-[100px] ' alt={cartItem.product_name} />
           <div className="lg:flex lg:flex-col lg:ml-2.5">
-            <div className="lg:text-[24px]">{cartItem.productName}</div>
-            <div><PriceTag value={cartItem.price} className='h3 text-deep_blue'/> * {cartItem.quantity}</div>
+            <div className="lg:text-[24px]">{cartItem.product_name}</div>
+            <div><PriceTag value={cartItem.price_at_order} className='h3 text-deep_blue'/> * {cartItem.quantity}</div>
             {/* show selected attributes */}
             <ul>
               {Object.entries(cartItem.selectedAttributes).map(([variantType, value]) => (
@@ -43,7 +43,7 @@ const ProductCartCard: React.FC<ProductCartCardProps> = ({
         </div>
         <PriceTag value={totalPrice} className='h1 text-deep_blue' />
         {removeable && (
-          <button onClick={() => onRemove(cartItem.productId, cartItem.selectedAttributes)}>
+          <button onClick={() => onRemove(cartItem.product_id, cartItem.selectedAttributes)}>
             <BsFillTrash3Fill aria-label="Remove Item" className="w-auto lg:h-[25px] fill-tomato_red" />
           </button>
         )}

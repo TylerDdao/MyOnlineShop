@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next';
 import {BsSearch, BsCartFill, BsList   }  from "react-icons/bs";
 import { RxCross1 } from "react-icons/rx";
 
-import { useLocation, Link  } from "react-router-dom";
+import { useLocation, Link, useNavigate, useSearchParams} from "react-router-dom";
 import united_state_flag from "../assets/united_state_flag.png"
 import vietnam_flag from "../assets/vietnam_flag.png"
+import { CartItem } from "../data/types";
 const NavBar = () => {
   const location = useLocation();
   const path = location.pathname
@@ -14,8 +15,11 @@ const NavBar = () => {
   const [currentLang, setCurrentLang] = useState(i18n.language);
   const [searchActive, setSearchActive] = useState(false);
   const [menuActive, setMenuActive] = useState(false);
+  const [cart, setCart] = useState<CartItem[]>([])
+  const[item, setItem] = useState<number|null>(null)
+  const [query, setQuery] = useState<string>()
+  const navigate = useNavigate()
 
-  
   const flagMap = {
     en: united_state_flag,
     vi: vietnam_flag,
@@ -43,6 +47,18 @@ const NavBar = () => {
     setSearchActive(!searchActive);
   }
 
+  const handleSearch = () =>{
+    navigate(`/products?query=${query}`);
+    navigate(0); // forces a soft reload of the current route
+  }
+  // const [searchParams] = useSearchParams();
+  // useEffect(() => {
+  //   const query = searchParams.get("query");
+  //   if (query) {
+  //     fetchProducts(query);
+  //   }
+  // }, [searchParams]);
+
   const toggleMobileMenu = () => {
     setMenuActive(!menuActive);
   };
@@ -64,7 +80,7 @@ const NavBar = () => {
                 <li className={`${path === '/' ? 'h1' : 'h1-b'}`}><Link to="/" >{t('home')}</Link></li>
                 <li className={`${path.startsWith('/products') ? 'h1' : 'h1-b'}`}><Link to="/products">{t('products')}</Link></li>
                 <li className={`${path.startsWith('/my-order') || window.location.pathname === '/my-order/:orderId' ? 'h1' : 'h1-b'}`}><Link to="/my-order">{t('my order')}</Link></li>
-                <li><Link to="/my-cart"><BsCartFill aria-label="My Cart" className="w-auto lg:h-10"/></Link></li>
+                <li><Link to="/my-cart"><BsCartFill aria-label="My Cart" className="w-auto lg:h-10"/></Link><div>{item}</div></li>
                 <li><button onClick={handleOpenSearch}><BsSearch aria-label="Search" className="w-auto lg:h-10"/></button></li>
                 <li><button onClick={() => handleChangeLanguage(currentLang === 'en' ? 'vi' : 'en')}><img key={currentLang} alt={`${currentLang}`} className="w-auto lg:h-5 lg:inline-block lg:mr-2" src={flagMap[currentLang]} onError={(e) => e.currentTarget.src = flagMap[currentLang]}/><span className="p">{t('language')}</span></button></li>
             </ul>
@@ -84,8 +100,8 @@ const NavBar = () => {
         <div id="search-bar" className={`absolute w-screen h-screen bg-white/30 backdrop-blur-sm top-0 left-0 flex flex-col justify-center text-center ${searchActive ? '' : 'hidden' }`}>
             <div className="flex justify-center"><button onClick={handleOpenSearch} className="text-black h1"><RxCross1 aria-label="Close Search" className="w-auto h-10"/></button></div>
             <div className="lg:flex lg:justify-center lg:space-x-5">
-              <input type="text" className="border border-black text-black lg:max-w-[500px] h-fit"  placeholder={t('enter product name')}/> 
-              <button className="primary-button">{t('search')}</button> 
+              <input type="text" className="border border-black text-black lg:max-w-[500px] h-fit"  placeholder={t('enter product name')} onChange={(e) => setQuery(e.target.value)}/> 
+              <button className="primary-button" onClick={handleSearch}>{t('search')}</button> 
             </div>
         </div>
     </nav>

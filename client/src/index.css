@@ -72,10 +72,17 @@
   @apply bg-deep_blue opacity-50 text-white p-2.5;
 }
 
+.destructive-button {
+  @apply bg-tomato_red text-white p-2.5;
+}
+
+.destructive-button:disabled {
+  @apply bg-tomato_red opacity-50 text-white p-2.5;
+}
+
 .secondary-button {
   @apply border border-deep_blue text-black p-2.5;
 }
-
 
 input{
   @apply p-2.5 border border-black;
